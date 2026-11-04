@@ -4,6 +4,20 @@ The system reads invoices from PDF, images, and spreadsheets. An LLM extracts th
 
 Extracted fields: invoice number, date, supplier, customer, subtotal, tax, total, currency, and line items. If a value is not in the document, it stays empty.
 
+## Demo
+
+Upload a batch. Each file is queued, then the list shows status.
+
+![Upload page](docs/demo/upload.png)
+
+Open a document to check the extracted fields. Save correction stores your edit and runs the checks again.
+
+![Document review](docs/demo/review.png)
+
+Search by keyword, supplier, customer, or invoice number.
+
+![Search](docs/demo/search.png)
+
 ## LLM
 
 Extraction calls the Gemini API. Set this in `.env` before you start the app:
