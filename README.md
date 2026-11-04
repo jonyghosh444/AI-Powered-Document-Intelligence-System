@@ -1,46 +1,56 @@
 # AI-Powered Document Intelligence System
 
-Upload invoices and related spreadsheets, extract the header fields and line items, validate the arithmetic, and review the result in a small web app.
+The system reads invoices from PDF, images, and spreadsheets. An LLM extracts the invoice fields. Validation checks the numbers, then a reviewer can correct the result and search past documents.
 
-## Stack
+Extracted fields: invoice number, date, supplier, customer, subtotal, tax, total, currency, and line items. If a value is not in the document, it stays empty.
 
-- Next.js review UI in `apps/web`
-- NestJS API and BullMQ worker in `apps/api`
-- Python parsing, OCR, extraction, and validation in `services/docproc`
-- Postgres 16 with pgvector, Redis 7
+## LLM
 
-pgvector is the vector store. A second database would cost memory on a small machine, and the brief allows that tradeoff when it is explained. Embeddings use the same `all-MiniLM-L6-v2` model through ONNX (`fastembed` 0.6.1). That release supports Python 3.13; the older 0.4 pin does not, and it avoids a PyTorch install on an 8 GB machine. If that model cannot be downloaded, the service falls back to a local hashed bag-of-words vector of the same size and reports the backend on the process response.
-
-Extraction defaults to a fixture reader so the project runs with no API key. A free Gemini key switches the same JSON contract to `gemini-3.5-flash-lite`. This laptop has 8 GB of RAM and no usable GPU, so a local 7B model is not the default.
-
-## Setup
-
-Docker is the way to run the whole system. It starts Postgres, Redis, the Python document service, the API, and the web UI.
-
-```bash
-cp .env.example .env
-docker compose up --build -d
-```
-
-Put a free [Google AI Studio](https://aistudio.google.com/apikey) key in `.env` when you want live extraction:
+Extraction calls the Gemini API. Set this in `.env` before you start the app:
 
 ```bash
 EXTRACTION_PROVIDER=gemini
-GEMINI_API_KEY=your-free-key
+GEMINI_API_KEY=your-api-key
 GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
-Then run `docker compose up -d` again so the document service picks up the key. With no key, leave `EXTRACTION_PROVIDER=fixture`.
+Get an API key from [Google AI Studio](https://aistudio.google.com/apikey). The prompt sent to the model is in `services/docproc/app/prompt.py`.
 
-Open http://localhost:3000. The API is http://localhost:3001. Uploaded files are shared by the API and the document service through one Docker volume. The first processed file downloads the local embedding model into that volume; later files reuse it. Tesseract and Poppler are inside the document image, so the host machine does not need them.
+After you change `.env`, restart the document service so it loads the new key.
 
-Postgres is published on port 5434 so it does not collide with another Postgres already using 5432. The containers talk to each other on the Compose network and do not use that host port.
+## Run with Docker
 
-Stop the stack with `docker compose down`. Add `-v` only when you also want to delete the database, uploads, and cached embedding model.
+Requirements: Docker and Docker Compose.
 
-### Run on the host instead
+```bash
+cp .env.example .env
+```
 
-This is only for development. The Compose file above is enough to use the app.
+Add the LLM settings above to `.env`, then:
+
+```bash
+docker compose up --build -d
+```
+
+Open http://localhost:3000. The API is http://localhost:3001.
+
+Postgres for this project is on port 5434. Redis is on port 6379. OCR tools are inside the document image.
+
+```bash
+docker compose down
+```
+
+`docker compose down -v` also deletes the database, uploaded files, and the cached embedding model.
+
+## Run without Docker
+
+Requirements: Node.js 20, Python 3.12+, Tesseract, Poppler, and Docker for Postgres and Redis.
+
+```bash
+cp .env.example .env
+```
+
+Set the LLM variables in `.env`. `DATABASE_URL` should use `localhost:5434`, `REDIS_URL` should be `redis://localhost:6379`, and `DOCPROC_URL` should be `http://127.0.0.1:8000`. Set `STORAGE_DIR` to the full path of `storage/uploads` on your machine.
 
 ```bash
 docker compose up -d postgres redis
@@ -50,24 +60,32 @@ npm run prisma:push
 python3 -m venv services/docproc/.venv
 services/docproc/.venv/bin/pip install -r services/docproc/requirements.txt
 mkdir -p storage/uploads
+```
+
+Run these in three terminals:
+
+```bash
 npm run dev:doc
 npm run dev:api
 npm run dev:web
 ```
 
-Host OCR also needs `tesseract-ocr` and `poppler-utils`. Point `DATABASE_URL` at `localhost:5434` and `DOCPROC_URL` at `http://127.0.0.1:8000`.
+Open http://localhost:3000.
 
-## What you can do
+## Using the app
 
-- Upload several PDF, JPG, PNG, TIFF, XLSX, XLS, or CSV files. The request returns when the jobs are queued.
-- Watch status move from queued to processing, then completed, needs review, or failed.
-- Open a document, fix a field or line item, and save. The previous value is kept in corrections and validation runs again.
-- Reprocess a job from the document page.
-- Filter by supplier, customer, invoice number, or keywords, and run a semantic query.
+1. Upload PDF, JPG, PNG, TIFF, XLSX, XLS, or CSV files. Up to 20 files at a time, 25 MB each.
+2. Wait until the status leaves processing.
+3. Open the document. Check the extracted fields against the source text.
+4. If the status is needs review, fix the fields or line items and save. Saving runs the checks again.
+5. Use Reprocess to send the file through extraction again.
+6. Search by supplier, customer, invoice number, or keywords. Semantic search matches by meaning.
 
-`DOC_PAGE_CAP` defaults to 50. That is the knob for the brief’s very long PDFs: pages are handled one at a time, and the cap keeps a single file from filling RAM.
+A document needs review when a field is missing, a date or currency is invalid, the line items do not match the subtotal, subtotal plus tax does not match the total, or the same invoice was already uploaded with different values.
 
-## Tests and evaluation
+`DOC_PAGE_CAP` in `.env` limits how many pages are read from one PDF. The default is 50. Pages are processed one at a time.
+
+## Tests
 
 ```bash
 npm run test:py
@@ -76,31 +94,14 @@ RUN_E2E=1 npm run test:api
 npm run eval
 ```
 
-Python tests cover PDF text, the page cap, multi-sheet Excel, CSV, legacy XLS, corrupt files, OCR when Tesseract is installed, the fixture extractor, and the validation rules. API unit tests cover corrections. The end-to-end test needs Docker and `RUN_E2E=1`; it uploads a file through Nest, waits for the worker, corrects a field, retries, and searches.
-
-`npm run eval` rebuilds `eval/dataset`, scores about 15 synthetic invoices, and writes `docs/evaluation-report.md`. The report names the provider. Fixture mode measures the rule reader. Gemini mode measures the live free-tier model.
+`npm run eval` scores the files in `eval/dataset` and writes `docs/evaluation-report.md`.
 
 ## API
 
-- `POST /documents` multipart field `files`
+- `POST /documents` with multipart field `files`
 - `GET /documents` and `GET /documents/:id`
-- `PATCH /documents/:id` corrected fields
+- `PATCH /documents/:id` to save corrections
 - `GET /jobs/:id`
 - `POST /jobs/:id/retry`
 - `GET /search?q=&supplier=&customer=&invoice_number=&status=`
-- `POST /search/semantic` JSON `{ "query": "..." }`
-
-## AI-assisted development
-
-This repository was implemented with Cursor’s agent (Grok). The extraction prompt is in `docs/prompts/extraction-v1.md` and `services/docproc/app/prompt.py`. No paid model is required to run the tests. Disclosure: generated code was reviewed by running the test suite, the evaluation script, and the upload flow.
-
-## Walkthrough recording
-
-Record a short screen capture after `docker compose up --build -d`:
-
-1. Upload a clean PDF and the bad-total sample from `eval/dataset`.
-2. Show the queued status change to completed and needs review.
-3. Open the bad total, correct the total so it matches subtotal plus tax, and save.
-4. Search for the supplier, then run a semantic query.
-
-The repo cannot produce that video on its own.
+- `POST /search/semantic` with JSON `{ "query": "..." }`
