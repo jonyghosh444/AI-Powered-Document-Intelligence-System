@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DocumentStatus {
+  queued
+  processing
+  needs_review
+  completed
+  failed
+
+  @@map("document_status")
+}
+
+enum JobType {
+  process
+  reprocess
+
+  @@map("job_type")
+}
+
+enum JobState {
+  queued
+  processing
+  completed
+  failed
+
+  @@map("job_state")
+}
+
+model Document {
+  id          String         @id @default(uuid())
+  filename    String
+  mime        String
+  storagePath String         @map("storage_path")
+  sha256      String
+  status      DocumentStatus @default(queued)
+  pageCount   Int?           @map("page_count")
+  error       String?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  jobs        Job[]
+  texts       DocumentText[]
+  extractions Extraction[]
+  lineItems   LineItem[]
+  issues      ValidationIssue[]
+  corrections Correction[]
+  chunks      Chunk[]
+
+  @@index([status])
+  @@index([sha256])
+  @@map("documents")
+}
+
+model Job {
+  id         String    @id @default(uuid())
+  documentId String    @map("document_id")
+  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  type       JobType
+  state      JobState  @default(queued)
+  attempts   Int       @default(0)
+  error      String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  startedAt  DateTime? @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+
+  @@index([documentId])
+  @@map("jobs")
+}
+
+model DocumentText {
+  id         String   @id @default(uuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  index      Int
+  label      String
+  text       String   @db.Text
+
+  @@index([documentId])
+  @@map("document_texts")
+}
+
+model Extraction {
+  id            String   @id @default(uuid())
+  documentId    String   @map("document_id")
+  document      Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  result        Json
+  provider      String
+  model         String
+  promptVersion String   @map("prompt_version")
+  isCurrent     Boolean  @default(true) @map("is_current")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([documentId, isCurrent])
+  @@map("extractions")
+}
+
+model LineItem {
+  id          String   @id @default(uuid())
+  documentId  String   @map("document_id")
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  position    Int
+  description String?  @db.Text
+  quantity    Float?
+  unitPrice   Float?   @map("unit_price")
+  amount      Float?
+
+  @@index([documentId])
+  @@map("line_items")
+}
+
+model ValidationIssue {
+  id         String   @id @default(uuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  code       String
+  field      String?
+  message    String
+  severity   String
+
+  @@index([documentId])
+  @@map("validation_issues")
+}
+
+model Correction {
+  id         String   @id @default(uuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  fieldPath  String   @map("field_path")
+  oldValue   String?  @map("old_value") @db.Text
+  newValue   String?  @map("new_value") @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([documentId])
+  @@map("corrections")
+}
+
+model Chunk {
+  id         String   @id @default(uuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  position   Int
+  text       String   @db.Text
+  embedding  Unsupported("vector(384)")?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([documentId])
+  @@map("chunks")
+}

@@ -1,0 +1,389 @@
+[
+  {
+    "id": "clean-pdf-1",
+    "filename": "clean-pdf-1.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1001",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-pdf-2",
+    "filename": "clean-pdf-2.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1002",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-pdf-3",
+    "filename": "clean-pdf-3.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1003",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-csv",
+    "filename": "clean.csv",
+    "kind": "csv",
+    "fields": {
+      "invoice_number": "INV-1004",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-xlsx",
+    "filename": "clean.xlsx",
+    "kind": "xlsx",
+    "fields": {
+      "invoice_number": "INV-1005",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-xls",
+    "filename": "clean.xls",
+    "kind": "xls",
+    "fields": {
+      "invoice_number": "INV-1006",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-image",
+    "filename": "clean.png",
+    "kind": "image",
+    "fields": {
+      "invoice_number": "INV-1007",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "missing-supplier",
+    "filename": "missing-supplier.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1008",
+      "invoice_date": "2024-03-01",
+      "supplier_name": null,
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "needs_review"
+  },
+  {
+    "id": "bad-total",
+    "filename": "bad-total.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1009",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 999.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "needs_review"
+  },
+  {
+    "id": "duplicate-pdf",
+    "filename": "duplicate.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1001",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "needs_review"
+  },
+  {
+    "id": "cross-xlsx",
+    "filename": "cross.xlsx",
+    "kind": "xlsx",
+    "fields": {
+      "invoice_number": "INV-1002",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 50.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "needs_review"
+  },
+  {
+    "id": "second-image",
+    "filename": "second.tiff",
+    "kind": "image",
+    "fields": {
+      "invoice_number": "INV-1010",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-pdf-4",
+    "filename": "clean-pdf-4.pdf",
+    "kind": "pdf",
+    "fields": {
+      "invoice_number": "INV-1011",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "clean-csv-2",
+    "filename": "clean-2.csv",
+    "kind": "csv",
+    "fields": {
+      "invoice_number": "INV-1012",
+      "invoice_date": "2024-03-01",
+      "supplier_name": "Acme Supplies",
+      "customer_name": "Northwind Traders",
+      "subtotal": 100.0,
+      "tax": 10.0,
+      "total": 110.0,
+      "currency": "USD"
+    },
+    "line_items": [
+      {
+        "description": "Widget",
+        "amount": 80
+      },
+      {
+        "description": "Gadget",
+        "amount": 20
+      }
+    ],
+    "expect_ok": true,
+    "expect_status": "completed"
+  },
+  {
+    "id": "corrupt-pdf",
+    "filename": "corrupt.pdf",
+    "kind": "corrupt",
+    "fields": {},
+    "line_items": [],
+    "expect_ok": false,
+    "expect_status": "failed"
+  }
+]

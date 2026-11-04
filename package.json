@@ -1,0 +1,18 @@
+{
+  "name": "document-intelligence",
+  "description": "AI-Powered Document Intelligence System",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev --workspace apps/api",
+    "dev:web": "npm run dev --workspace apps/web",
+    "dev:doc": "services/docproc/.venv/bin/uvicorn app.main:app --app-dir services/docproc --host 127.0.0.1 --port 8000",
+    "test:py": "cd services/docproc && .venv/bin/pytest tests -q",
+    "test:api": "npm test --workspace apps/api",
+    "prisma:push": "npm run prisma:push --workspace apps/api",
+    "eval": "services/docproc/.venv/bin/python eval/run_eval.py"
+  }
+}

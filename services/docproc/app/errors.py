@@ -1,0 +1,2 @@
+class DocumentProcessError(Exception):
+    pass

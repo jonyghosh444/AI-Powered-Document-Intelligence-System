@@ -1,0 +1,126 @@
+:root {
+  --bg: #f3efe6;
+  --ink: #1d1a16;
+  --muted: #6d6458;
+  --card: #fffdf8;
+  --line: #e3d9c8;
+  --accent: #0f5f5c;
+  --accent-ink: #f4fffe;
+  --danger: #8d2b2b;
+  --danger-bg: #fdecec;
+  --warn: #8a5a00;
+  --warn-bg: #fff4dc;
+  --ok: #1d6b3a;
+  --ok-bg: #e7f6ec;
+  --shadow: 0 12px 30px rgba(60, 42, 20, 0.06);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(15, 95, 92, 0.08), transparent 28%),
+    var(--bg);
+  min-height: 100vh;
+}
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+.shell { max-width: 1100px; margin: 0 auto; padding: 28px 20px 64px; }
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.brand { display: flex; flex-direction: column; text-decoration: none; }
+.brand strong { font-family: Palatino, Georgia, serif; font-size: 20px; letter-spacing: -0.03em; line-height: 1.2; max-width: 28ch; }
+.brand span { color: var(--muted); font-size: 13px; }
+.nav-links { display: flex; gap: 8px; }
+.nav-links a {
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: transparent;
+}
+.nav-links a:hover { background: rgba(255, 255, 255, 0.7); }
+
+h1 { font-family: Palatino, Georgia, serif; font-size: 40px; line-height: 1.05; margin: 0 0 8px; letter-spacing: -0.03em; }
+.lede { color: var(--muted); margin: 0 0 22px; max-width: 62ch; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+.stack { display: grid; gap: 16px; }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+.drop {
+  border: 1.5px dashed #c8b89a;
+  border-radius: 16px;
+  padding: 28px;
+  background: #fffaf1;
+  text-align: center;
+}
+.drop strong { display: block; margin-bottom: 6px; }
+.drop input { margin-top: 12px; }
+.primary, .secondary {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+}
+.primary { background: var(--accent); color: var(--accent-ink); }
+.secondary { background: transparent; border: 1px solid var(--line); }
+.primary:disabled { opacity: 0.6; cursor: wait; }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  background: #eeeae2;
+}
+.badge.completed { background: var(--ok-bg); color: var(--ok); }
+.badge.needs_review { background: var(--warn-bg); color: var(--warn); }
+.badge.failed { background: var(--danger-bg); color: var(--danger); }
+.badge.processing, .badge.queued { background: #e7f1f1; color: var(--accent); }
+
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+input, textarea, select {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 10px;
+  padding: 9px 10px;
+}
+.issues { display: grid; gap: 8px; }
+.issue {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.issue.error { background: var(--danger-bg); color: var(--danger); }
+.error-text { color: var(--danger); }
+.muted { color: var(--muted); }
+.filename { font-weight: 650; text-decoration: none; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; white-space: pre-wrap; }
+details { margin-top: 8px; }
+.search-grid { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr) auto; gap: 10px; align-items: end; }
+.score { color: var(--muted); font-size: 13px; }
+
+@media (max-width: 800px) {
+  .split, .fields, .search-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 32px; }
+}

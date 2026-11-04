@@ -1,0 +1,17 @@
+.git
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/.venv
+**/__pycache__
+**/.pytest_cache
+storage
+eval/dataset
+eval/output
+.env
+**/.env
+apps/api/.env
+*.md
+coverage
+.fastembed_cache

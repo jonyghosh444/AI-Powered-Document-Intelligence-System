@@ -1,0 +1,16 @@
+node_modules
+.next
+dist
+.venv
+__pycache__
+.pytest_cache
+.mypy_cache
+*.pyc
+.env
+apps/api/.env
+storage
+*.tsbuildinfo
+coverage
+.fastembed_cache
+eval/output
+.DS_Store
